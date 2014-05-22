@@ -2,6 +2,7 @@
 #define REALTIMEANDNODE_H
 
 #include "EventNode.h"
+#include "ActionNode.h"
 
 class RealtimeAndNode : public EventNode
 {
@@ -14,8 +15,9 @@ class RealtimeAndNode : public EventNode
 
     protected:
     private:
-        sf::Keyboard::Key m_event;
+        ActionNode<sf::Keyboard::Key> m_actionNode;
         std::shared_ptr<EventNode> m_nextNode;
+
 };
 
 #endif // REALTIMEANDNODE_H

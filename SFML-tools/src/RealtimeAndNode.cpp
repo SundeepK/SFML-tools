@@ -1,6 +1,6 @@
 #include "RealtimeAndNode.h"
 
-RealtimeAndNode::RealtimeAndNode(sf::Keyboard::Key event, EventNode* nextNode) : m_actionNode(event, nextNode)
+RealtimeAndNode::RealtimeAndNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode) : m_actionNode(event, std::move(nextNode))
 {
 }
 
@@ -9,11 +9,11 @@ RealtimeAndNode::~RealtimeAndNode()
 }
 
 EventNode* RealtimeAndNode::getNode(){
-    m_actionNode.getNextNode();
+  return   m_actionNode.getNextNode();
 }
 
-void RealtimeAndNode::setNextNode(EventNode* nextNode){
-    m_nextNode.reset(nextNode);
+void RealtimeAndNode::setNextNode(std::unique_ptr<EventNode> nextNode){
+    m_nextNode = std::move(nextNode);
 }
 
 sf::Keyboard::Key RealtimeAndNode::getEvent(){

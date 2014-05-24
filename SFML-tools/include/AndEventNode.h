@@ -12,17 +12,17 @@
 class AndEventNode : public EventNode
 {
     public:
-        AndEventNode(sf::Keyboard::Key event, EventNode* nextNode);
+        AndEventNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
         virtual ~AndEventNode();
         EventNode* getNode();
-        void setNextNode(EventNode* nextNode);
+        void setNextNode(std::unique_ptr<EventNode> nextNode);
         sf::Keyboard::Key getEvent();
         bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
 
     protected:
     private:
         ActionNode<sf::Keyboard::Key> m_actionNode;
-        std::shared_ptr<EventNode> m_nextNode;
+        std::unique_ptr<EventNode> m_nextNode;
 };
 
 #endif // ANDEVENTNODE_H

@@ -1,6 +1,6 @@
 #include "OrEventNode.h"
 
-OrEventNode::OrEventNode(sf::Keyboard::Key event, EventNode* nextNode) : m_actionNode(event, nextNode)
+OrEventNode::OrEventNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode) : m_actionNode(event, std::move(nextNode))
 {
 }
 
@@ -13,8 +13,8 @@ EventNode* OrEventNode::getNode(){
     m_actionNode.getNextNode();
 }
 
-void OrEventNode::setNextNode(EventNode* nextNode){
-    m_nextNode.reset(nextNode);
+void OrEventNode::setNextNode(std::unique_ptr<EventNode> nextNode){
+    m_nextNode =std::move(nextNode);
 }
 
 sf::Keyboard::Key OrEventNode::getEvent(){

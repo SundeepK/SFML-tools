@@ -12,17 +12,17 @@
 class RealtimeOrNode : public EventNode
 {
     public:
-        RealtimeOrNode(sf::Keyboard::Key event, EventNode* nextNode);
+        RealtimeOrNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
         virtual ~RealtimeOrNode();
         EventNode* getNode();
-        void setNextNode(EventNode* nextNode);
+        void setNextNode(std::unique_ptr<EventNode> nextNode);
         sf::Keyboard::Key getEvent();
         bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
 
     protected:
     private:
         ActionNode<sf::Keyboard::Key> m_actionNode;
-        std::shared_ptr<EventNode> m_nextNode;
+        std::unique_ptr<EventNode> m_nextNode;
 };
 
 #endif // REALTIMEORNODE_H

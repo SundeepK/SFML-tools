@@ -44,7 +44,7 @@ class ActionController
         void triggerCallbacks();
     protected:
     private:
-        std::unordered_map<const Key_type, ActionToCallbacks, TemplateHasher<Key_type>> m_keyToActions;
+        std::unordered_map<const Key_type,  ActionToCallbacks, TemplateHasher<Key_type>> m_keyToActions;
         std::vector<sf::Event> m_events;
 
 };
@@ -76,6 +76,8 @@ ActionController<Key_type>& ActionController<Key_type>::operator= (ActionControl
 template <typename Key_type>
 Action& ActionController<Key_type>::operator[] (const Key_type& actionKey)
 {
+
+
     ActionToCallbacks actionsToCallbacks = m_keyToActions[actionKey];
     if(&actionsToCallbacks.m_action != NULL){
       return m_keyToActions[actionKey].m_action;
@@ -89,8 +91,7 @@ Action& ActionController<Key_type>::operator[] (const Key_type& actionKey)
 template <typename Key_type>
 void ActionController<Key_type>::addCallback(const Key_type& actionKey, std::function<void()> callback){
 
-    ActionToCallbacks actionsToCallbacks = m_keyToActions[actionKey];
-    if(&actionsToCallbacks.m_action != NULL){
+    if(&m_keyToActions[actionKey].m_action != NULL){
        m_keyToActions[actionKey].m_callbacks.push_back(callback);
     }
 }
@@ -126,11 +127,9 @@ void ActionController<Key_type>::triggerCallbacks()
 {
     for ( auto actionItr = m_keyToActions.begin(); actionItr!= m_keyToActions.end(); ++actionItr )
     {
-        ActionToCallbacks actionsToCallbacks = actionItr->second;
-        Action action = actionsToCallbacks.m_action;
-        if(action.isActionTriggered(m_events))
+        if(actionItr->second.m_action.isActionTriggered(m_events))
         {
-            auto callbacks = actionsToCallbacks.m_callbacks;
+            auto callbacks = actionItr->second.m_callbacks;
             for(auto && fn : callbacks)
                 fn();
         }

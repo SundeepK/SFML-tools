@@ -7,18 +7,18 @@ template <typename Event_type>
 class ActionNode
 {
     public:
-        ActionNode(Event_type action, EventNode* event);
+        ActionNode(Event_type action, std::unique_ptr<EventNode> event);
         EventNode* getNextNode();
         Event_type getEvent();
     protected:
     private:
         Event_type m_action;
-        std::shared_ptr<EventNode> m_nextNode;
+        std::unique_ptr<EventNode> m_nextNode;
 
 };
 
 template <typename Event_type>
-ActionNode<Event_type>::ActionNode(Event_type action, EventNode* event) : m_action(action), m_nextNode(event)
+ActionNode<Event_type>::ActionNode(Event_type action, std::unique_ptr<EventNode> event) : m_action(action), m_nextNode(std::move(event))
 {
 
 }

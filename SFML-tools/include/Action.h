@@ -22,13 +22,20 @@ class Action
         Action();
         Action(sf::Keyboard::Key key, ActionType actionType = RealTime );
         virtual ~Action();
-        Action operator&& (const Action& lhs);
-        Action operator|| (const Action& lhs);
+       Action operator&& ( Action& lhs);
+       Action& operator= ( Action& rhs);
+       Action (const Action& rhs);
+
+//        Action operator|| (const Action& lhs);
         bool isActionTriggered(std::vector<sf::Event>& events);
+//        Action(Action&& f) : m_linkedNode(std::move(f.m_linkedNode)) {}
+        Action(std::unique_ptr<EventNode> nextEvent);
+        Action(EventNode* nextEvent);
+
     protected:
     private:
-        Action(EventNode* nextEvent);
-        std::shared_ptr<EventNode> m_linkedNode;
+
+        std::unique_ptr<EventNode> m_linkedNode;
 };
 
 #endif // ACTION_H

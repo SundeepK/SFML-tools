@@ -6,6 +6,7 @@
 #include <SFML/Window.hpp>
 #include "EventNode.h"
 #include "RealtimeAndNode.h"
+#include "RealtimeOrNode.h"
 #include "AndEventNode.h"
 #include <memory>
 
@@ -22,6 +23,7 @@ class Action
         Action(sf::Keyboard::Key key, ActionType actionType = RealTime );
         virtual ~Action();
         Action operator&& (const Action& lhs);
+        Action operator|| (const Action& lhs);
         bool isActionTriggered(std::vector<sf::Event>& events);
     protected:
     private:

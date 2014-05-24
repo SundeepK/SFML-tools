@@ -1,14 +1,19 @@
-#ifndef REALTIMEANDNODE_H
-#define REALTIMEANDNODE_H
+#ifndef OREVENTNODE_H
+#define OREVENTNODE_H
 
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
+#include <vector>
+#include <memory>
 #include "EventNode.h"
 #include "ActionNode.h"
 
-class RealtimeAndNode : public EventNode
+class OrEventNode: public EventNode
 {
     public:
-        RealtimeAndNode(sf::Keyboard::Key event, EventNode* nextNode);
-        virtual ~RealtimeAndNode();
+        OrEventNode(sf::Keyboard::Key event, EventNode* nextNode);
+        virtual ~OrEventNode();
         EventNode* getNode();
         void setNextNode(EventNode* nextNode);
         sf::Keyboard::Key getEvent();
@@ -18,7 +23,6 @@ class RealtimeAndNode : public EventNode
     private:
         ActionNode<sf::Keyboard::Key> m_actionNode;
         std::shared_ptr<EventNode> m_nextNode;
-
 };
 
-#endif // REALTIMEANDNODE_H
+#endif // OREVENTNODE_H

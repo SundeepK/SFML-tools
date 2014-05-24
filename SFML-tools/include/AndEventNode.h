@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include "EventNode.h"
+#include "ActionNode.h"
 
 class AndEventNode : public EventNode
 {
@@ -15,11 +16,12 @@ class AndEventNode : public EventNode
         virtual ~AndEventNode();
         EventNode* getNode();
         void setNextNode(EventNode* nextNode);
+        sf::Keyboard::Key getEvent();
         bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
 
     protected:
     private:
-        sf::Keyboard::Key m_event;
+        ActionNode<sf::Keyboard::Key> m_actionNode;
         std::shared_ptr<EventNode> m_nextNode;
 };
 

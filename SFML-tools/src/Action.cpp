@@ -43,6 +43,23 @@ Action Action::operator&& (const Action& lhs)
 	return Action(m_linkedNode.get());
 }
 
+Action Action::operator|| (const Action& lhs)
+{
+    EventNode* node = m_linkedNode.get();
+    while(node){
+        EventNode* n = node->getNode();
+        if(n){
+           node = n;
+        }else{
+            break;
+        }
+    }
+    EventNode* n1 = lhs.m_linkedNode.get();
+    node->setNextNode(new RealtimeOrNode(n1->getEvent(), lhs.m_linkedNode.get()) );
+	return Action(m_linkedNode.get());
+}
+
+
 bool Action::isActionTriggered(std::vector<sf::Event>& events ){
     return  m_linkedNode->isEventTriggered(events);
 }

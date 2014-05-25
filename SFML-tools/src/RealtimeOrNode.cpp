@@ -9,7 +9,7 @@ RealtimeOrNode::~RealtimeOrNode()
 }
 
 EventNode* RealtimeOrNode::getNode(){
-    m_actionNode.getNextNode();
+  return   m_nextNode.get();
 }
 
 void RealtimeOrNode::setNextNode(EventNode* nextNode){

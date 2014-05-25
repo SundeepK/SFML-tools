@@ -29,7 +29,7 @@ Action::Action(std::unique_ptr<EventNode> nextEvent): m_linkedNode(std::move(nex
 }
 
 
- Action& Action::operator=(  Action& rhs){
+ Action& Action::operator=(  Action rhs){
     m_linkedNode = std::move(rhs.m_linkedNode);
     return *this;
 }
@@ -41,8 +41,7 @@ Action::Action (const Action& rhs) : m_linkedNode((rhs.m_linkedNode.get())){
  Action::Action(EventNode* nextEvent): m_linkedNode(nextEvent){
  }
 
-
-Action Action::operator&& ( Action& lhs)
+Action Action::operator&& ( Action lhs)
 {
     EventNode* node = m_linkedNode.get();
     while(node){

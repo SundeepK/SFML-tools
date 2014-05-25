@@ -14,8 +14,8 @@ EventNode* AndEventNode::getNode(){
     m_actionNode.getNextNode();
 }
 
-void AndEventNode::setNextNode(std::unique_ptr<EventNode> nextNode){
-    m_nextNode = std::move(nextNode);
+void AndEventNode::setNextNode(EventNode* nextNode){
+    m_nextNode.reset(nextNode);
 }
 
 sf::Keyboard::Key AndEventNode::getEvent(){

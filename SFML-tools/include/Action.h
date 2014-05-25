@@ -25,10 +25,8 @@ class Action
        Action operator&& ( Action& lhs);
        Action& operator= ( Action& rhs);
        Action (const Action& rhs);
-
-//        Action operator|| (const Action& lhs);
+        Action operator|| (const Action& lhs);
         bool isActionTriggered(std::vector<sf::Event>& events);
-//        Action(Action&& f) : m_linkedNode(std::move(f.m_linkedNode)) {}
         Action(std::unique_ptr<EventNode> nextEvent);
         Action(EventNode* nextEvent);
 

@@ -38,9 +38,6 @@ Action::Action (const Action& rhs) : m_linkedNode((rhs.m_linkedNode.get())){
 
 }
 
-
-//        Action::Action(Action&& f) : m_linkedNode(std::move(f.m_linkedNode)) {}
-
  Action::Action(EventNode* nextEvent): m_linkedNode(nextEvent){
  }
 
@@ -56,7 +53,7 @@ Action Action::operator&& ( Action& lhs)
             break;
         }
     }
-    node->setNextNode(std::move(lhs.m_linkedNode));
+    node->setNextNode(new RealtimeAndNode(lhs.m_linkedNode->getEvent(), NULL));
     Action m((std::move(m_linkedNode)));
 	return m;
 }

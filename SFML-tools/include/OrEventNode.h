@@ -15,7 +15,7 @@ class OrEventNode: public EventNode
         OrEventNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
         virtual ~OrEventNode();
         EventNode* getNode();
-        void setNextNode(std::unique_ptr<EventNode> nextNode);
+        void setNextNode(EventNode* nextNode);
         sf::Keyboard::Key getEvent();
         bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
 

@@ -12,8 +12,8 @@ EventNode* RealtimeOrNode::getNode(){
     m_actionNode.getNextNode();
 }
 
-void RealtimeOrNode::setNextNode(std::unique_ptr<EventNode> nextNode){
-    m_nextNode = std::move(nextNode);
+void RealtimeOrNode::setNextNode(EventNode* nextNode){
+    m_nextNode.reset(nextNode);
 }
 
 sf::Keyboard::Key RealtimeOrNode::getEvent(){

@@ -19,6 +19,7 @@ class RealtimeOrNode : public EventNode
         sf::Keyboard::Key getEvent();
         bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
 
+
     protected:
     private:
         ActionNode<sf::Keyboard::Key> m_actionNode;

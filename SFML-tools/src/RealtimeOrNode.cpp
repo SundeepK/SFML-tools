@@ -9,11 +9,12 @@ RealtimeOrNode::~RealtimeOrNode()
 }
 
 EventNode* RealtimeOrNode::getNode(){
-  return   m_nextNode.get();
+  return   m_actionNode.getNextNode();
 }
 
 void RealtimeOrNode::setNextNode(std::unique_ptr<EventNode> nextNode){
-    m_nextNode = std::move(nextNode);
+     ActionNode<sf::Keyboard::Key> a (m_actionNode.getEvent(),std::move(nextNode));
+    m_actionNode = a;
 }
 
 sf::Keyboard::Key RealtimeOrNode::getEvent(){
@@ -23,8 +24,8 @@ sf::Keyboard::Key RealtimeOrNode::getEvent(){
 
 bool RealtimeOrNode::isEventTriggered(std::vector<sf::Event>& keyboardEvents){
     bool eventTriggered =  sf::Keyboard::isKeyPressed(m_actionNode.getEvent());
-    if(m_nextNode){
-       return eventTriggered || m_nextNode->isEventTriggered(keyboardEvents);
+    if(m_actionNode.getNextNode()){
+       return eventTriggered ||  m_actionNode.getNextNode()->isEventTriggered(keyboardEvents);
     }else{
         return eventTriggered;
     }

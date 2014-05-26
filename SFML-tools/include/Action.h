@@ -9,9 +9,11 @@
 #include "RealtimeOrNode.h"
 #include "AndEventNode.h"
 #include "RealTimeNode.h"
+#include "OrEventNode.h"
 #include <memory>
 
-enum ActionType {
+enum ActionType
+{
     RealTime,
     Event
 };
@@ -19,22 +21,28 @@ enum ActionType {
 
 class Action
 {
-    public:
-        Action();
-        Action(sf::Keyboard::Key key, ActionType actionType = RealTime );
-        virtual ~Action();
-       Action operator&& ( Action lhs);
-       Action& operator= ( Action rhs);
-       Action (const Action& rhs);
-        Action operator|| (const Action& lhs);
-        bool isActionTriggered(std::vector<sf::Event>& events);
-        Action(std::unique_ptr<EventNode> nextEvent);
-        Action(EventNode* nextEvent);
+public:
+    Action();
+    Action(sf::Keyboard::Key key, ActionType actionType = RealTime );
+    virtual ~Action();
+    Action operator&& ( Action lhs);
+    Action& operator= ( Action rhs);
+    Action (const Action& rhs);
+    Action operator|| (const Action& lhs);
+    bool isActionTriggered(std::vector<sf::Event>& events);
+    Action(std::unique_ptr<EventNode> nextEvent);
+    Action(EventNode* nextEvent);
 
-    protected:
-    private:
+protected:
+private:
+    std::unique_ptr<EventNode> getNewAndNode(sf::Keyboard::Key key, ActionType actionType);
+    std::unique_ptr<EventNode> getNewOrNode(sf::Keyboard::Key key, ActionType actionType);
+    void setNextNode(EventNode* node, EventNode* eventToSet);
+    Action newActionWithNextNode(EventNode* node);
 
-        std::unique_ptr<EventNode> m_linkedNode;
+
+    ActionType m_actionType;
+    std::unique_ptr<EventNode> m_linkedNode;
 };
 
 #endif // ACTION_H

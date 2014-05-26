@@ -5,12 +5,8 @@ Action::Action()
 }
 
 
-Action::Action(sf::Keyboard::Key key, ActionType actionType)
+Action::Action(sf::Keyboard::Key key, ActionType actionType) : m_actionType(actionType)
 {
-
-//    m_linkedNode.reset(new RealTimeNode(key, NULL));
-
-
     switch(actionType)
     {
     case RealTime:
@@ -49,64 +45,79 @@ Action::Action(EventNode* nextEvent)
     m_linkedNode.reset(nextEvent);
 }
 
-Action Action::operator&& ( Action lhs)
-{
-    if( m_linkedNode->getNode())
-    {
-        EventNode* node = m_linkedNode.get();
-
-        while(node)
-        {
-            EventNode* n = node->getNode();
-            if(n)
-            {
-                node = n;
-            }
-            else
-            {
-                break;
-            }
-        }
-        node->setNextNode(new RealtimeAndNode(lhs.m_linkedNode->getEvent(), NULL));
-        return Action ((std::move(m_linkedNode)));
-    }
-    else
-    {
-        std::unique_ptr<EventNode> event(new RealtimeAndNode(m_linkedNode->getEvent(), NULL));
+Action Action::operator&& ( Action lhs){
+    Action andedAction;
+    if( m_linkedNode->getNode()){
+        setNextNode(m_linkedNode.get(), new RealtimeAndNode(lhs.m_linkedNode->getEvent(), NULL));
+        andedAction = Action ((std::move(m_linkedNode)));
+    }else{
+        std::unique_ptr<EventNode> event = getNewAndNode(m_linkedNode->getEvent(), m_actionType);
         event->setNextNode(new RealtimeAndNode(lhs.m_linkedNode->getEvent(), NULL));
-        return Action ((std::move(event)));
+        andedAction = Action ((std::move(event)));
     }
+    return andedAction;
+}
+
+void Action::setNextNode(EventNode* node, EventNode* nodeToSet){
+    while(node){
+        EventNode* n = node->getNode();
+        if(n){
+            node = n;
+        }else{
+            break;
+        }
+    }
+    node->setNextNode(nodeToSet);
+}
+
+std::unique_ptr<EventNode> Action::getNewAndNode(sf::Keyboard::Key key, ActionType actionType){
+    std::unique_ptr<EventNode> event;
+    switch(actionType)
+    {
+    case RealTime:
+        event.reset(new RealtimeAndNode(key, NULL));
+        break;
+    case Event:
+        event.reset(new AndEventNode(key, NULL));
+        break;
+    }
+    return event;
+}
+
+
+std::unique_ptr<EventNode> Action::getNewOrNode(sf::Keyboard::Key key, ActionType actionType)
+{
+    std::unique_ptr<EventNode> event;
+    switch(actionType)
+    {
+    case RealTime:
+        event.reset(new RealtimeOrNode(key, NULL));
+        break;
+    case Event:
+        event.reset(new OrEventNode(key, NULL));
+        break;
+    }
+    return event;
 }
 
 Action Action::operator|| (const Action& lhs)
 {
-    if( m_linkedNode->getNode())
-    {
-        EventNode* node = m_linkedNode.get();
-
-        while(node)
-        {
-            EventNode* n = node->getNode();
-            if(n)
-            {
-                node = n;
-            }
-            else
-            {
-                break;
-            }
-        }
-        node->setNextNode(new RealtimeOrNode(lhs.m_linkedNode->getEvent(), NULL));
-        return Action ((std::move(m_linkedNode)));
-    }
-    else
-    {
-        std::unique_ptr<EventNode> event(new RealtimeOrNode(m_linkedNode->getEvent(), NULL));
+    Action andedAction;
+    RealtimeOrNode node(lhs.m_linkedNode->getEvent(), NULL);
+    if( m_linkedNode->getNode()){
+        andedAction = newActionWithNextNode(&node);
+    }else{
+        std::unique_ptr<EventNode> event = getNewOrNode(m_linkedNode->getEvent(), m_actionType);
         event->setNextNode(new RealtimeOrNode(lhs.m_linkedNode->getEvent(), NULL));
-        return Action ((std::move(event)));
+        andedAction = Action ((std::move(event)));
     }
+    return andedAction;
 }
 
+Action Action::newActionWithNextNode(EventNode* node){
+      setNextNode(m_linkedNode.get(), node);
+      return Action ((std::move(m_linkedNode)));
+}
 
 bool Action::isActionTriggered(std::vector<sf::Event>& events )
 {

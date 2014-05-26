@@ -13,8 +13,8 @@ EventNode* OrEventNode::getNode(){
     m_actionNode.getNextNode();
 }
 
-void OrEventNode::setNextNode(EventNode* nextNode){
-    m_nextNode.reset(nextNode);
+void OrEventNode::setNextNode(std::unique_ptr<EventNode> nextNode){
+    m_nextNode = std::move(nextNode);
 }
 
 sf::Keyboard::Key OrEventNode::getEvent(){

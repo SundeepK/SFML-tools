@@ -37,8 +37,9 @@ protected:
 private:
     std::unique_ptr<EventNode> getNewAndNode(sf::Keyboard::Key key, ActionType actionType);
     std::unique_ptr<EventNode> getNewOrNode(sf::Keyboard::Key key, ActionType actionType);
-    void setNextNode(EventNode* node, EventNode* eventToSet);
-    Action newActionWithNextNode(EventNode* node);
+    void setNextNode(EventNode* node, std::unique_ptr<EventNode> eventToSet);
+    Action newActionWithNextNode(std::unique_ptr<EventNode>  node);
+    Action applyOperator(std::unique_ptr<EventNode> nextNode);
 
 
     ActionType m_actionType;

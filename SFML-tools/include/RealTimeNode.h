@@ -11,7 +11,7 @@ class RealTimeNode : public EventNode
         RealTimeNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
         virtual ~RealTimeNode();
         EventNode* getNode();
-        void setNextNode(EventNode* nextNode);
+        void setNextNode(std::unique_ptr<EventNode> nextNode);
         sf::Keyboard::Key getEvent();
         bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
 

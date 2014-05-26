@@ -48,17 +48,21 @@ Action::Action(EventNode* nextEvent)
 Action Action::operator&& ( Action lhs){
     Action andedAction;
     if( m_linkedNode->getNode()){
-        setNextNode(m_linkedNode.get(), new RealtimeAndNode(lhs.m_linkedNode->getEvent(), NULL));
+                   std::unique_ptr<EventNode> node(new RealtimeAndNode (lhs.m_linkedNode->getEvent(), NULL));
+
+        setNextNode(m_linkedNode.get(), std::move(node));
         andedAction = Action ((std::move(m_linkedNode)));
     }else{
         std::unique_ptr<EventNode> event = getNewAndNode(m_linkedNode->getEvent(), m_actionType);
-        event->setNextNode(new RealtimeAndNode(lhs.m_linkedNode->getEvent(), NULL));
+           std::unique_ptr<EventNode> node(new RealtimeAndNode (lhs.m_linkedNode->getEvent(), NULL));
+
+        event->setNextNode(std::move(node));
         andedAction = Action ((std::move(event)));
     }
     return andedAction;
 }
 
-void Action::setNextNode(EventNode* node, EventNode* nodeToSet){
+void Action::setNextNode(EventNode* node, std::unique_ptr<EventNode> nodeToSet){
     while(node){
         EventNode* n = node->getNode();
         if(n){
@@ -67,7 +71,7 @@ void Action::setNextNode(EventNode* node, EventNode* nodeToSet){
             break;
         }
     }
-    node->setNextNode(nodeToSet);
+    node->setNextNode(std::move(nodeToSet));
 }
 
 std::unique_ptr<EventNode> Action::getNewAndNode(sf::Keyboard::Key key, ActionType actionType){
@@ -102,20 +106,24 @@ std::unique_ptr<EventNode> Action::getNewOrNode(sf::Keyboard::Key key, ActionTyp
 
 Action Action::operator|| (const Action& lhs)
 {
+   std::unique_ptr<EventNode> node(new RealtimeAndNode (lhs.m_linkedNode->getEvent(), NULL));
+    return applyOperator(std::move(node));
+}
+
+Action Action::applyOperator(std::unique_ptr<EventNode> nextNode){
     Action andedAction;
-    RealtimeOrNode node(lhs.m_linkedNode->getEvent(), NULL);
     if( m_linkedNode->getNode()){
-        andedAction = newActionWithNextNode(&node);
+        andedAction = newActionWithNextNode(std::move(nextNode));
     }else{
         std::unique_ptr<EventNode> event = getNewOrNode(m_linkedNode->getEvent(), m_actionType);
-        event->setNextNode(new RealtimeOrNode(lhs.m_linkedNode->getEvent(), NULL));
+        event->setNextNode(std::move(nextNode));
         andedAction = Action ((std::move(event)));
     }
     return andedAction;
 }
 
-Action Action::newActionWithNextNode(EventNode* node){
-      setNextNode(m_linkedNode.get(), node);
+Action Action::newActionWithNextNode(std::unique_ptr<EventNode>  node){
+      setNextNode(m_linkedNode.get(), std::move(node));
       return Action ((std::move(m_linkedNode)));
 }
 

@@ -15,7 +15,7 @@ class AndEventNode : public EventNode
         AndEventNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
         virtual ~AndEventNode();
         EventNode* getNode();
-        void setNextNode(EventNode* nextNode);
+        void setNextNode(std::unique_ptr<EventNode> nextNode);
         sf::Keyboard::Key getEvent();
         bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
 

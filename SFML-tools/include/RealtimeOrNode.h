@@ -6,24 +6,19 @@
 #include <SFML/Window.hpp>
 #include <vector>
 #include <memory>
-#include "EventNode.h"
+#include "RealTimeNode.h"
 #include "ActionNode.h"
 
-class RealtimeOrNode : public EventNode
+class RealtimeOrNode : public RealTimeNode
 {
     public:
         RealtimeOrNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
         virtual ~RealtimeOrNode();
-        EventNode* getNode();
-        void setNextNode(std::unique_ptr<EventNode> nextNode);
-        sf::Keyboard::Key getEvent();
         bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
-
 
     protected:
     private:
-        ActionNode<sf::Keyboard::Key> m_actionNode;
-        std::unique_ptr<EventNode> m_nextNode;
+
 };
 
 #endif // REALTIMEORNODE_H

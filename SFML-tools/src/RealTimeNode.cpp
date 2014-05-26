@@ -9,12 +9,14 @@ RealTimeNode::~RealTimeNode()
 }
 
 EventNode* RealTimeNode::getNode(){
-    m_actionNode.getNextNode();
+  return   m_actionNode.getNextNode();
 }
 
 void RealTimeNode::setNextNode(std::unique_ptr<EventNode> nextNode){
-    m_nextNode = std::move(nextNode);
+     ActionNode<sf::Keyboard::Key> a (m_actionNode.getEvent(),std::move(nextNode));
+    m_actionNode = a;
 }
+
 sf::Keyboard::Key RealTimeNode::getEvent(){
     return m_actionNode.getEvent();
 }

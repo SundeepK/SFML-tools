@@ -2,23 +2,35 @@
 #define REALTIMENODE_H
 
 #include "EventNode.h"
-#include "ActionNode.h"
 #include <memory>
+#include "InputEventNode.h"
+#include "EventNode.h"
 
-class RealTimeNode : public EventNode
+
+class RealTimeNode : public InputEventNode
 {
     public:
         RealTimeNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
         virtual ~RealTimeNode();
-        EventNode* getNode();
-        void setNextNode(std::unique_ptr<EventNode> nextNode);
-        sf::Keyboard::Key getEvent();
+        bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
+};
+
+class RealtimeOrNode : public InputEventNode
+{
+    public:
+        RealtimeOrNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
+        virtual ~RealtimeOrNode();
         bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
 
-    protected:
-    private:
-        ActionNode<sf::Keyboard::Key> m_actionNode;
-        std::unique_ptr<EventNode> m_nextNode;
+};
+
+class RealtimeAndNode : public InputEventNode
+{
+    public:
+        RealtimeAndNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
+        virtual ~RealtimeAndNode();
+        bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
+
 };
 
 #endif // REALTIMENODE_H

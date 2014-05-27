@@ -1,6 +1,6 @@
-#include "RealtimeOrNode.h"
+#include "RealTimeNode.h"
 
-RealtimeOrNode::RealtimeOrNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode) : RealTimeNode(event, std::move(nextNode))
+RealtimeOrNode::RealtimeOrNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode) : InputEventNode(event, std::move(nextNode))
 {
 }
 

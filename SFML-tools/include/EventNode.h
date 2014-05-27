@@ -9,15 +9,13 @@
 
 class EventNode
 {
-    public:
-        EventNode();
-        virtual ~EventNode();
-        virtual bool isEventTriggered(std::vector<sf::Event>& keyboardEvents) = 0;
-        virtual EventNode* getNode() = 0;
-        virtual void setNextNode(std::unique_ptr<EventNode> nextNode) = 0;
-        virtual sf::Keyboard::Key getEvent() = 0;
-    protected:
-    private:
+public:
+    virtual bool isEventTriggered(std::vector<sf::Event>& keyboardEvents) = 0;
+    virtual EventNode* getNode() = 0;
+    virtual void setNextNode(std::unique_ptr<EventNode> nextNode) = 0;
+    virtual sf::Keyboard::Key getEvent() = 0;
+protected:
+private:
 };
 
 

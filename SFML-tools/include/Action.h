@@ -5,8 +5,6 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include "EventNode.h"
-#include "RealtimeAndNode.h"
-#include "RealtimeOrNode.h"
 #include "AndEventNode.h"
 #include "RealTimeNode.h"
 #include "OrEventNode.h"

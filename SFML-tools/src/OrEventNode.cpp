@@ -1,4 +1,4 @@
-#include "OrEventNode.h"
+#include "InputNodes.h"
 
 OrEventNode::OrEventNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode) : InputEventNode(event, std::move(nextNode))
 {

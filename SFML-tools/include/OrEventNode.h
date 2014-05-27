@@ -9,13 +9,6 @@
 #include "InputEventNode.h"
 #include "ActionNode.h"
 
-class OrEventNode: public InputEventNode
-{
-    public:
-        OrEventNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode);
-        virtual ~OrEventNode();
-        bool isEventTriggered(std::vector<sf::Event>& keyboardEvents);
 
-};
 
 #endif // OREVENTNODE_H

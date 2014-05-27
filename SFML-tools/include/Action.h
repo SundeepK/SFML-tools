@@ -5,9 +5,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include "EventNode.h"
-#include "AndEventNode.h"
-#include "RealTimeNode.h"
-#include "OrEventNode.h"
+#include "InputNodes.h"
 #include <memory>
 
 enum ActionType

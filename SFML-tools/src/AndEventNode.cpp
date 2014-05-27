@@ -1,4 +1,4 @@
-#include "AndEventNode.h"
+#include "InputNodes.h"
 #include <functional>
 
 AndEventNode::AndEventNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode) : InputEventNode(event, std::move(nextNode))

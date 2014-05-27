@@ -1,4 +1,4 @@
-#include "RealTimeNode.h"
+#include "InputNodes.h"
 
 RealtimeAndNode::RealtimeAndNode(sf::Keyboard::Key event, std::unique_ptr<EventNode> nextNode) : InputEventNode(event, std::move(nextNode))
 {

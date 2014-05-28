@@ -9,13 +9,14 @@
 #include <SFML/Window.hpp>
 
 template <typename Key_type>
-struct TemplateHasher : public std::unary_function<Key_type, std::size_t> {
+struct TemplateHasher : public std::unary_function<Key_type, std::size_t>
+{
 public:
     std::size_t operator()(const Key_type & t) const
     {
-      size_t seed = 0;
-      hash_combine(seed, t);
-      return seed;
+        size_t seed = 0;
+        hash_combine(seed, t);
+        return seed;
     }
 
     void hash_combine(std::size_t & seed, const Key_type & v) const
@@ -25,7 +26,8 @@ public:
     }
 };
 
-struct ActionToCallbacks{
+struct ActionToCallbacks
+{
     Action m_action;
     std::vector<std::function<void()>> m_callbacks;
 };
@@ -33,19 +35,19 @@ struct ActionToCallbacks{
 template <typename Key_type>
 class ActionController
 {
-    public:
-        ActionController();
-        ActionController(ActionController&& source);
-        Action& operator[] (const Key_type& actionKey);
-        void addCallback(const Key_type& actionKey, std::function<void()> callback);
-        ActionController& operator= (ActionController&& controller);
+public:
+    ActionController();
+    ActionController(ActionController&& source);
+    Action& operator[] (const Key_type& actionKey);
+    void addCallback(const Key_type& actionKey, std::function<void()> callback);
+    ActionController& operator= (ActionController&& controller);
 
-        void update(sf::RenderWindow& window);
-        void triggerCallbacks();
-    protected:
-    private:
-        std::unordered_map<const Key_type,  ActionToCallbacks, TemplateHasher<Key_type>> m_keyToActions;
-        std::vector<sf::Event> m_events;
+    void update(sf::RenderWindow& window);
+    void triggerCallbacks();
+protected:
+private:
+    std::unordered_map<const Key_type,  ActionToCallbacks, TemplateHasher<Key_type>> m_keyToActions;
+    std::vector<sf::Event> m_events;
 
 };
 
@@ -57,8 +59,8 @@ ActionController<Key_type>::ActionController()
 
 template <typename Key_type>
 ActionController<Key_type>::ActionController(ActionController&& source)
-: m_events(std::move(source.m_events))
-, m_keyToActions(std::move(source.m_keyToActions))
+    : m_events(std::move(source.m_events))
+    , m_keyToActions(std::move(source.m_keyToActions))
 {
 }
 
@@ -67,32 +69,34 @@ ActionController<Key_type>::ActionController(ActionController&& source)
 template <typename Key_type>
 ActionController<Key_type>& ActionController<Key_type>::operator= (ActionController&& source)
 {
-	m_events = std::move(source.m_events);
-	m_keyToActions = std::move(source.m_keyToActions);
+    m_events = std::move(source.m_events);
+    m_keyToActions = std::move(source.m_keyToActions);
 
-	return *this;
+    return *this;
 }
 
 template <typename Key_type>
 Action& ActionController<Key_type>::operator[] (const Key_type& actionKey)
 {
-
-
     ActionToCallbacks actionsToCallbacks = m_keyToActions[actionKey];
-    if(&actionsToCallbacks.m_action != NULL){
-      return m_keyToActions[actionKey].m_action;
-    }else{
-          ActionToCallbacks actCallbacks = {};
-          m_keyToActions[actionKey] =  actCallbacks;
-          return m_keyToActions[actionKey].m_action;
+    if(m_keyToActions.find(actionKey) != m_keyToActions.end())
+    {
+        return m_keyToActions[actionKey].m_action;
+    }
+    else
+    {
+        ActionToCallbacks actCallbacks = {};
+        m_keyToActions[actionKey] =  actCallbacks;
+        return m_keyToActions[actionKey].m_action;
     }
 }
 
 template <typename Key_type>
-void ActionController<Key_type>::addCallback(const Key_type& actionKey, std::function<void()> callback){
-
-    if(&m_keyToActions[actionKey].m_action != NULL){
-       m_keyToActions[actionKey].m_callbacks.push_back(callback);
+void ActionController<Key_type>::addCallback(const Key_type& actionKey, std::function<void()> callback)
+{
+    if(m_keyToActions.find(actionKey) != m_keyToActions.end())
+    {
+        m_keyToActions[actionKey].m_callbacks.push_back(callback);
     }
 }
 
@@ -108,14 +112,14 @@ void ActionController<Key_type>::update(sf::RenderWindow& window)
             window.close();
         }
 
-        	switch (event.type)
-		{
-			case sf::Event::GainedFocus:
-				break;
+        switch (event.type)
+        {
+        case sf::Event::GainedFocus:
+            break;
 
-			case sf::Event::LostFocus:
-				break;
-		}
+        case sf::Event::LostFocus:
+            break;
+        }
 
         m_events.push_back(event);
     }

@@ -51,8 +51,7 @@ Action Action::operator&& ( Action lhs){
    return applyOperator(std::move(event), std::move(node));
 }
 
-Action Action::operator|| (const Action& lhs)
-{
+Action Action::operator|| (const Action& lhs){
    std::unique_ptr<EventNode> node = getNewOrNode(lhs.m_linkedNode->getEvent(), lhs.m_actionType);
    std::unique_ptr<EventNode> event = getNewOrNode(m_linkedNode->getEvent(), m_actionType);
    return applyOperator(std::move(event), std::move(node));

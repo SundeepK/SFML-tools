@@ -29,7 +29,7 @@ public:
 struct ActionToCallbacks
 {
     Action m_action;
-    std::vector<std::function<void()>> m_callbacks;
+    std::vector<std::function<void(float dt)>> m_callbacks;
 };
 
 template <typename Key_type>
@@ -39,11 +39,11 @@ public:
     ActionController();
     ActionController(ActionController&& source);
     Action& operator[] (const Key_type& actionKey);
-    void addCallback(const Key_type& actionKey, std::function<void()> callback);
+    void addCallback(const Key_type& actionKey, std::function<void(float dt)> callback);
     ActionController& operator= (ActionController&& controller);
 
     void update(sf::RenderWindow& window);
-    void triggerCallbacks();
+    void triggerCallbacks(float dt);
 protected:
 private:
     std::unordered_map<const Key_type,  ActionToCallbacks, TemplateHasher<Key_type>> m_keyToActions;
@@ -92,7 +92,7 @@ Action& ActionController<Key_type>::operator[] (const Key_type& actionKey)
 }
 
 template <typename Key_type>
-void ActionController<Key_type>::addCallback(const Key_type& actionKey, std::function<void()> callback)
+void ActionController<Key_type>::addCallback(const Key_type& actionKey, std::function<void(float dt)> callback)
 {
     if(m_keyToActions.find(actionKey) != m_keyToActions.end())
     {
@@ -127,7 +127,7 @@ void ActionController<Key_type>::update(sf::RenderWindow& window)
 }
 
 template <typename Key_type>
-void ActionController<Key_type>::triggerCallbacks()
+void ActionController<Key_type>::triggerCallbacks(float dt)
 {
     for ( auto actionItr = m_keyToActions.begin(); actionItr!= m_keyToActions.end(); ++actionItr )
     {
@@ -135,7 +135,7 @@ void ActionController<Key_type>::triggerCallbacks()
         {
             auto callbacks = actionItr->second.m_callbacks;
             for(auto && fn : callbacks)
-                fn();
+                fn(dt);
         }
 
     }

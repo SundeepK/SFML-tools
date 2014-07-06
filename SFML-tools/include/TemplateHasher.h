@@ -2,6 +2,7 @@
 #define TEMPLATEHASHER_H
 
 
+
 template <typename Key_type>
 struct TemplateHasher : public std::unary_function<Key_type, std::size_t>
 {
@@ -19,5 +20,6 @@ public:
         seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     }
 };
+
 
 #endif // TEMPLATEHASHER_H

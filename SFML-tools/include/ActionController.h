@@ -10,24 +10,26 @@
 #include "TemplateHasher.h"
 
 
-struct ActionToCallbacks
-{
-    Action m_action;
-    std::vector<std::function<void(float dt)>> m_callbacks;
-};
 
-template <typename Key_type, typename Hasher_type = TemplateHasher<Key_type>>
+template <typename Key_type, typename Hasher_type = TemplateHasher<Key_type>, typename... Arguments>
 class ActionController
 {
+
+	struct ActionToCallbacks
+	{
+	    Action m_action;
+	    std::vector<std::function<void(float dt, Arguments...)>> m_callbacks;
+	};
+
 public:
     ActionController();
     ActionController(ActionController&& source);
     Action& operator[] (const Key_type& actionKey);
-    void addCallback(const Key_type& actionKey, std::function<void(float dt)> callback);
+    void addCallback(const Key_type& actionKey, std::function<void(float dt, Arguments...)> callback);
     ActionController& operator= (ActionController&& controller);
 
     void update(sf::RenderWindow& window);
-    void triggerCallbacks(float dt);
+    void triggerCallbacks(float dt, Arguments...);
 protected:
 private:
     std::unordered_map<const Key_type,  ActionToCallbacks, Hasher_type> m_keyToActions;
@@ -36,13 +38,13 @@ private:
 };
 
 
-template <typename Key_type, typename Hasher_type>
-ActionController<Key_type, Hasher_type>::ActionController()
+template <typename Key_type, typename Hasher_type, typename... Arguments>
+ActionController<Key_type, Hasher_type, Arguments...>::ActionController()
 {
 }
 
-template <typename Key_type, typename Hasher_type>
-ActionController<Key_type, Hasher_type>::ActionController(ActionController&& source)
+template <typename Key_type, typename Hasher_type, typename... Arguments>
+ActionController<Key_type, Hasher_type, Arguments...>::ActionController(ActionController&& source)
     : m_events(std::move(source.m_events))
     , m_keyToActions(std::move(source.m_keyToActions))
 {
@@ -50,8 +52,8 @@ ActionController<Key_type, Hasher_type>::ActionController(ActionController&& sou
 
 
 
-template <typename Key_type, typename Hasher_type>
-ActionController<Key_type, Hasher_type>& ActionController<Key_type, Hasher_type>::operator= (ActionController&& source)
+template <typename Key_type, typename Hasher_type, typename... Arguments>
+ActionController<Key_type, Hasher_type, Arguments...>& ActionController<Key_type, Hasher_type, Arguments...>::operator= (ActionController&& source)
 {
     m_events = std::move(source.m_events);
     m_keyToActions = std::move(source.m_keyToActions);
@@ -59,8 +61,8 @@ ActionController<Key_type, Hasher_type>& ActionController<Key_type, Hasher_type>
     return *this;
 }
 
-template <typename Key_type, typename Hasher_type>
-Action& ActionController<Key_type, Hasher_type>::operator[] (const Key_type& actionKey)
+template <typename Key_type, typename Hasher_type, typename... Arguments>
+Action& ActionController<Key_type, Hasher_type, Arguments...>::operator[] (const Key_type& actionKey)
 {
     ActionToCallbacks actionsToCallbacks = m_keyToActions[actionKey];
     if(m_keyToActions.find(actionKey) != m_keyToActions.end())
@@ -75,8 +77,8 @@ Action& ActionController<Key_type, Hasher_type>::operator[] (const Key_type& act
     }
 }
 
-template <typename Key_type, typename Hasher_type>
-void ActionController<Key_type, Hasher_type>::addCallback(const Key_type& actionKey, std::function<void(float dt)> callback)
+template <typename Key_type, typename Hasher_type, typename... Arguments>
+void ActionController<Key_type, Hasher_type, Arguments... >::addCallback(const Key_type& actionKey, std::function<void(float dt, Arguments... args)> callback)
 {
     if(m_keyToActions.find(actionKey) != m_keyToActions.end())
     {
@@ -84,8 +86,8 @@ void ActionController<Key_type, Hasher_type>::addCallback(const Key_type& action
     }
 }
 
-template <typename Key_type, typename Hasher_type>
-void ActionController<Key_type, Hasher_type>::update(sf::RenderWindow& window)
+template <typename Key_type, typename Hasher_type, typename... Arguments>
+void ActionController<Key_type, Hasher_type,  Arguments... >::update(sf::RenderWindow& window)
 {
     m_events.clear();
     sf::Event event;
@@ -110,8 +112,8 @@ void ActionController<Key_type, Hasher_type>::update(sf::RenderWindow& window)
 
 }
 
-template <typename Key_type, typename Hasher_type>
-void ActionController<Key_type, Hasher_type>::triggerCallbacks(float dt)
+template <typename Key_type, typename Hasher_type, typename... Arguments>
+void ActionController<Key_type, Hasher_type, Arguments... >::triggerCallbacks(float dt, Arguments... args)
 {
     for ( auto actionItr = m_keyToActions.begin(); actionItr!= m_keyToActions.end(); ++actionItr )
     {
@@ -119,7 +121,7 @@ void ActionController<Key_type, Hasher_type>::triggerCallbacks(float dt)
         {
             auto callbacks = actionItr->second.m_callbacks;
             for(auto && fn : callbacks)
-                fn(dt);
+                fn(dt, args...);
         }
 
     }

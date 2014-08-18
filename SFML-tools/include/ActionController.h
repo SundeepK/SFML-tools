@@ -16,7 +16,7 @@ struct ActionToCallbacks
     std::vector<std::function<void(float dt)>> m_callbacks;
 };
 
-template <typename Key_type>
+template <typename Key_type, typename Hasher_type = TemplateHasher<Key_type>>
 class ActionController
 {
 public:
@@ -30,19 +30,19 @@ public:
     void triggerCallbacks(float dt);
 protected:
 private:
-    std::unordered_map<const Key_type,  ActionToCallbacks, TemplateHasher<Key_type>> m_keyToActions;
+    std::unordered_map<const Key_type,  ActionToCallbacks, Hasher_type> m_keyToActions;
     std::vector<sf::Event> m_events;
 
 };
 
 
-template <typename Key_type>
-ActionController<Key_type>::ActionController()
+template <typename Key_type, typename Hasher_type>
+ActionController<Key_type, Hasher_type>::ActionController()
 {
 }
 
-template <typename Key_type>
-ActionController<Key_type>::ActionController(ActionController&& source)
+template <typename Key_type, typename Hasher_type>
+ActionController<Key_type, Hasher_type>::ActionController(ActionController&& source)
     : m_events(std::move(source.m_events))
     , m_keyToActions(std::move(source.m_keyToActions))
 {
@@ -50,8 +50,8 @@ ActionController<Key_type>::ActionController(ActionController&& source)
 
 
 
-template <typename Key_type>
-ActionController<Key_type>& ActionController<Key_type>::operator= (ActionController&& source)
+template <typename Key_type, typename Hasher_type>
+ActionController<Key_type, Hasher_type>& ActionController<Key_type, Hasher_type>::operator= (ActionController&& source)
 {
     m_events = std::move(source.m_events);
     m_keyToActions = std::move(source.m_keyToActions);
@@ -59,8 +59,8 @@ ActionController<Key_type>& ActionController<Key_type>::operator= (ActionControl
     return *this;
 }
 
-template <typename Key_type>
-Action& ActionController<Key_type>::operator[] (const Key_type& actionKey)
+template <typename Key_type, typename Hasher_type>
+Action& ActionController<Key_type, Hasher_type>::operator[] (const Key_type& actionKey)
 {
     ActionToCallbacks actionsToCallbacks = m_keyToActions[actionKey];
     if(m_keyToActions.find(actionKey) != m_keyToActions.end())
@@ -75,8 +75,8 @@ Action& ActionController<Key_type>::operator[] (const Key_type& actionKey)
     }
 }
 
-template <typename Key_type>
-void ActionController<Key_type>::addCallback(const Key_type& actionKey, std::function<void(float dt)> callback)
+template <typename Key_type, typename Hasher_type>
+void ActionController<Key_type, Hasher_type>::addCallback(const Key_type& actionKey, std::function<void(float dt)> callback)
 {
     if(m_keyToActions.find(actionKey) != m_keyToActions.end())
     {
@@ -84,8 +84,8 @@ void ActionController<Key_type>::addCallback(const Key_type& actionKey, std::fun
     }
 }
 
-template <typename Key_type>
-void ActionController<Key_type>::update(sf::RenderWindow& window)
+template <typename Key_type, typename Hasher_type>
+void ActionController<Key_type, Hasher_type>::update(sf::RenderWindow& window)
 {
     m_events.clear();
     sf::Event event;
@@ -110,8 +110,8 @@ void ActionController<Key_type>::update(sf::RenderWindow& window)
 
 }
 
-template <typename Key_type>
-void ActionController<Key_type>::triggerCallbacks(float dt)
+template <typename Key_type, typename Hasher_type>
+void ActionController<Key_type, Hasher_type>::triggerCallbacks(float dt)
 {
     for ( auto actionItr = m_keyToActions.begin(); actionItr!= m_keyToActions.end(); ++actionItr )
     {

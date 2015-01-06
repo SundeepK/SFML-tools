@@ -29,11 +29,17 @@ public:
     ActionController& operator= (ActionController&& controller);
 
     void update(sf::RenderWindow& window);
+    void update(std::vector<sf::Event> events);
     void triggerCallbacks(float dt, Arguments...);
+    void triggerCallbacks(sf::RenderWindow& window, float dt, Arguments...);
+
 protected:
 private:
     std::unordered_map<const Key_type,  ActionToCallbacks, Hasher_type> m_keyToActions;
+    std::unordered_map<const Key_type,  ActionToCallbacks, Hasher_type> m_keyToReleasedActions;
+
     std::vector<sf::Event> m_events;
+    std::vector<sf::Event> m_releasedEvents;
 
 };
 
@@ -90,6 +96,7 @@ template <typename Key_type, typename Hasher_type, typename... Arguments>
 void ActionController<Key_type, Hasher_type,  Arguments... >::update(sf::RenderWindow& window)
 {
     m_events.clear();
+    m_releasedEvents.clear();
     sf::Event event;
     while (window.pollEvent(event))
     {
@@ -107,9 +114,40 @@ void ActionController<Key_type, Hasher_type,  Arguments... >::update(sf::RenderW
             break;
         }
 
-        m_events.push_back(event);
+        if (event.type == sf::Event::KeyPressed)
+            m_events.push_back(event);
+
+        if (event.type == sf::Event::KeyReleased)
+            m_releasedEvents.push_back(event);
+
     }
 
+}
+
+
+template <typename Key_type, typename Hasher_type, typename... Arguments>
+void ActionController<Key_type, Hasher_type,  Arguments... >::update(std::vector<sf::Event> events)
+{
+    m_events.clear();
+    m_releasedEvents.clear();
+    for(sf::Event event: events)
+    {
+        switch (event.type)
+        {
+        case sf::Event::GainedFocus:
+            break;
+
+        case sf::Event::LostFocus:
+            break;
+        }
+
+        if (event.type == sf::Event::KeyPressed)
+            m_events.push_back(event);
+
+        if (event.type == sf::Event::KeyReleased)
+            m_releasedEvents.push_back(event);
+
+    }
 }
 
 template <typename Key_type, typename Hasher_type, typename... Arguments>
@@ -123,7 +161,23 @@ void ActionController<Key_type, Hasher_type, Arguments... >::triggerCallbacks(fl
             for(auto && fn : callbacks)
                 fn(dt, args...);
         }
-
     }
+
+}
+
+template <typename Key_type, typename Hasher_type, typename... Arguments>
+void ActionController<Key_type, Hasher_type, Arguments... >::triggerCallbacks(sf::RenderWindow& window, float dt, Arguments... args)
+{
+		for (auto actionItr = m_keyToActions.begin(); actionItr != m_keyToActions.end(); ++actionItr) {
+			if (actionItr->second.m_action.getActionType() == ActionType::Released) {
+				if (actionItr->second.m_action.isActionTriggered(m_releasedEvents)) {
+					auto callbacks = actionItr->second.m_callbacks;
+					for (auto && fn : callbacks)
+						fn(dt, args...);
+					break;
+				}
+			}
+	}
+
 }
 #endif // EVENCONTROLLER_H

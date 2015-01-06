@@ -15,6 +15,9 @@ Action::Action(sf::Keyboard::Key key, ActionType actionType) : m_actionType(acti
     case Event:
         m_linkedNode.reset(new AndEventNode(key, NULL));
         break;
+    case Released:
+        m_linkedNode.reset(new AndEventNode(key, NULL));
+        break;
     }
 
 }
@@ -119,4 +122,8 @@ Action Action::newActionWithNextNode(std::unique_ptr<EventNode>  node){
 bool Action::isActionTriggered(std::vector<sf::Event>& events )
 {
     return  m_linkedNode->isEventTriggered(events);
+}
+
+ActionType Action::getActionType() {
+	return m_actionType;
 }

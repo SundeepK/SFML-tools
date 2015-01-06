@@ -11,6 +11,7 @@
 enum ActionType
 {
     RealTime,
+    Released,
     Event
 };
 
@@ -26,6 +27,7 @@ public:
     Action (const Action& rhs);
     Action operator|| (const Action& lhs);
     bool isActionTriggered(std::vector<sf::Event>& events);
+    ActionType getActionType();
     Action(std::unique_ptr<EventNode> nextEvent);
     Action(EventNode* nextEvent);
 
